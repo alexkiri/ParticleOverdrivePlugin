@@ -3,6 +3,10 @@
 A mod for Hollow Knight: Silksong that allows increasing the amount of particles to ridiculous levels
 
 
+https://github.com/user-attachments/assets/55179fb4-7e0b-4c08-a33d-08f62880fcee
+
+
+
 ## Installation
 
 ### The Simple Way
