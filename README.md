@@ -17,8 +17,7 @@ Use r2modman or Gale.
 
 1. Download [BepInExPack Silksong](https://thunderstore.io/c/hollow-knight-silksong/p/BepInEx/BepInExPack_Silksong/) and extract it to the game folder, next to the game executable
 2. Download [BepinExConfigurationManager](https://thunderstore.io/c/hollow-knight-silksong/p/jakobhellermann/BepInExConfigurationManager/)
-2. Download from [thunderstore](https://thunderstore.io/c/hollow-knight-silksong/p/alexkiri/ParticleOverdrive/) or [github]
-(https://github.com/alexkiri/ParticleOverdrivePlugin/releases) and extract it inside of `<game folder>/BepInEx/plugins`
+2. Download from [thunderstore](https://thunderstore.io/c/hollow-knight-silksong/p/alexkiri/ParticleOverdrive/) or [github](https://github.com/alexkiri/ParticleOverdrivePlugin/releases) and extract it inside of `<game folder>/BepInEx/plugins`
 3.
     - (Windows) Run the game normally
     - (Linux/MacOS) Run `run_bepinex.sh`
