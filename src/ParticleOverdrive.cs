@@ -12,7 +12,43 @@ namespace ParticleOverdrive;
 public partial class ParticleOverdrive : BaseUnityPlugin {
     internal static ManualLogSource Log;
     private readonly Harmony harmony = new(Id);
-    public static ConfigEntry<int> particlesMultiplierConfigEntry;
+    public static ConfigEntry<ParticlesMultiplier> particlesMultiplierConfigEntry;
+    public static ConfigEntry<bool> upgradeAllParticleSystemsConfigEntry;
+    public static ConfigEntry<int> extremeMultiplierConfigEntry;
+
+    public enum ParticlesMultiplier {
+        VanillaLow,
+        VanillaHigh,
+        Double,
+        Triple,
+        Quadruple,
+        High5x,
+        High6x,
+        High7x,
+        High8x,
+        Ultra10x,
+        Ultra12x,
+        Ultra16x,
+        Extreme
+    }
+
+    public static float MultiplierToFloat(ParticlesMultiplier multiplier) {
+        return multiplier switch {
+            ParticlesMultiplier.VanillaLow => 0.5f,
+            ParticlesMultiplier.VanillaHigh => 1.0f,
+            ParticlesMultiplier.Double => 2.0f,
+            ParticlesMultiplier.Triple => 3.0f,
+            ParticlesMultiplier.Quadruple => 4.0f,
+            ParticlesMultiplier.High5x => 5.0f,
+            ParticlesMultiplier.High6x => 6.0f,
+            ParticlesMultiplier.High7x => 7.0f,
+            ParticlesMultiplier.High8x => 8.0f,
+            ParticlesMultiplier.Ultra10x => 10.0f,
+            ParticlesMultiplier.Ultra12x => 12.0f,
+            ParticlesMultiplier.Ultra16x => 16.0f,
+            _ => 1.0f
+        };
+    }
 
     private void Awake() {
         Log = base.Logger;
@@ -21,14 +57,39 @@ public partial class ParticleOverdrive : BaseUnityPlugin {
         particlesMultiplierConfigEntry = Config.Bind(
             "General",
             "ParticlesMultiplier",
-            1,
+            ParticlesMultiplier.VanillaHigh,
             new ConfigDescription(
                 "Greatly increases the amount of particles, while greatly decreasing performance. Ridiculously high values are allowed, use carefully.",
-                new AcceptableValueRange<int>(1, 256),
-                []
+                null,
+                new ConfigurationManagerAttributes { Order = 3 }
             )
         );
         particlesMultiplierConfigEntry.SettingChanged += (sender, args) => {
+            GameManager.instance.RefreshParticleSystems();
+        };
+
+        upgradeAllParticleSystemsConfigEntry = Config.Bind(
+            "General",
+            "UpgradeAllParticleSystems",
+            true,
+            new ConfigDescription(
+                "yep",
+                null,
+                new ConfigurationManagerAttributes { Order = 1 }
+            )
+        );
+        extremeMultiplierConfigEntry = Config.Bind(
+            "General",
+            "ExtremeMultiplier",
+            32,
+            new ConfigDescription(
+                "ye ye",
+                new AcceptableValueRange<int>(16, 128),
+                new ConfigurationManagerAttributes { IsAdvanced = true, Order = 2 }
+            )
+        );
+        extremeMultiplierConfigEntry.SettingChanged += (sender, args) => {
+            particlesMultiplierConfigEntry.Value = ParticlesMultiplier.Extreme;
             GameManager.instance.RefreshParticleSystems();
         };
 
@@ -51,10 +112,12 @@ public partial class ParticleOverdrive : BaseUnityPlugin {
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
         Log.LogDebug($"loaded '{scene.name}'");
-        upgradeParticleSystems();
+        if (upgradeAllParticleSystemsConfigEntry.Value) {
+            upgradeAllParticleSystems();
+        }
     }
 
-    private void upgradeParticleSystems() {
+    private void upgradeAllParticleSystems() {
         var particleSystems = GameObject.FindObjectsByType<ParticleSystem>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         Log.LogDebug($"Found particleSystems: {particleSystems.Length}");
 
@@ -63,16 +126,13 @@ public partial class ParticleOverdrive : BaseUnityPlugin {
                 ps.emission.enabled
                 && ps.emission.rateOverTime.constant > 0
                 && ps.emission.rateOverTimeMultiplier > 0
-                && ps.main.cullingMode == ParticleSystemCullingMode.PauseAndCatchup
                 && ps.gameObject.GetComponent<ReduceParticleEffects>() == null
             )
             .ToArray();
 
-        // Log.LogDebug("name, instanceID, maxParticles, duration, rateOverTimeMultiplier");
         foreach (var ps in filteredParticleSystems) {
-            // Log.LogDebug($"{ps.gameObject.name}, {ps.GetInstanceID()}, {ps.main.maxParticles}, {ps.main.duration}, {ps.emission.rateOverTimeMultiplier}, {ps.emission.burstCount}");
             ps.gameObject.AddComponentIfNotPresent<ReduceParticleEffects>();
         }
-        Log.LogDebug($"Filtered and upgraded: {filteredParticleSystems.Length}");
+        Log.LogInfo($"Filtered and upgraded: {filteredParticleSystems.Length}");
     }
 }
