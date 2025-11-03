@@ -12,7 +12,7 @@ public class Patcher {
     static bool ReduceParticleEffects_SetEmission(ReduceParticleEffects __instance) {
         float multiplier;
         var presetMultiplier = ParticleOverdrive.particlesMultiplierConfigEntry.Value;
-        if (presetMultiplier == ParticleOverdrive.ParticlesMultiplier.Extreme) {
+        if (presetMultiplier == ParticleOverdrive.ParticlesMultiplier.Extreme16xPlus) {
             multiplier = ParticleOverdrive.extremeMultiplierConfigEntry.Value;
         } else {
             multiplier = ParticleOverdrive.MultiplierToFloat(presetMultiplier);

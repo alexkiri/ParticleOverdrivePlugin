@@ -29,7 +29,7 @@ public partial class ParticleOverdrive : BaseUnityPlugin {
         Ultra10x,
         Ultra12x,
         Ultra16x,
-        Extreme
+        Extreme16xPlus
     }
 
     public static float MultiplierToFloat(ParticlesMultiplier multiplier) {
@@ -59,7 +59,7 @@ public partial class ParticleOverdrive : BaseUnityPlugin {
             "ParticlesMultiplier",
             ParticlesMultiplier.VanillaHigh,
             new ConfigDescription(
-                "Greatly increases the amount of particles, while greatly decreasing performance. Ridiculously high values are allowed, use carefully.",
+                "Increases the amount of particles, while decreasing performance.",
                 null,
                 new ConfigurationManagerAttributes { Order = 3 }
             )
@@ -73,7 +73,7 @@ public partial class ParticleOverdrive : BaseUnityPlugin {
             "UpgradeAllParticleSystems",
             true,
             new ConfigDescription(
-                "yep",
+                "Upgrades all the particle systems to be affected by the multiplier. Requires quit & reload in order to be applied.",
                 null,
                 new ConfigurationManagerAttributes { Order = 1 }
             )
@@ -81,15 +81,15 @@ public partial class ParticleOverdrive : BaseUnityPlugin {
         extremeMultiplierConfigEntry = Config.Bind(
             "General",
             "ExtremeMultiplier",
-            32,
+            16,
             new ConfigDescription(
-                "ye ye",
+                "Same as above, but in addition, ridiculously high values are allowed. It's recommended to disable the `UpgradeAllParticleSystems` option when using this multiplier, otherwise the game would be unplayable. Use carefully, as it can greatly decrease the performance.",
                 new AcceptableValueRange<int>(16, 128),
                 new ConfigurationManagerAttributes { IsAdvanced = true, Order = 2 }
             )
         );
         extremeMultiplierConfigEntry.SettingChanged += (sender, args) => {
-            particlesMultiplierConfigEntry.Value = ParticlesMultiplier.Extreme;
+            particlesMultiplierConfigEntry.Value = ParticlesMultiplier.Extreme16xPlus;
             GameManager.instance.RefreshParticleSystems();
         };
 
