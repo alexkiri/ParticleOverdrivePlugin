@@ -118,7 +118,7 @@ public partial class ParticleOverdrive : BaseUnityPlugin {
     }
 
     private void upgradeAllParticleSystems() {
-        var particleSystems = GameObject.FindObjectsByType<ParticleSystem>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        var particleSystems = FindObjectsByType<ParticleSystem>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         Log.LogDebug($"Found particleSystems: {particleSystems.Length}");
 
         var filteredParticleSystems = particleSystems
@@ -126,6 +126,7 @@ public partial class ParticleOverdrive : BaseUnityPlugin {
                 ps.emission.enabled
                 && ps.emission.rateOverTime.constant > 0
                 && ps.emission.rateOverTimeMultiplier > 0
+                && ps.main.cullingMode == ParticleSystemCullingMode.PauseAndCatchup
                 && ps.gameObject.GetComponent<ReduceParticleEffects>() == null
             )
             .ToArray();
